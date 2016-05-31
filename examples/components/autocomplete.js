@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 
 import Map, {Marker, GoogleApiWrapper} from '../../src/index'
 import styles from './autocomplete.module.css'
+import {Link} from 'react-router'
+import {searchNearby} from '../../src/lib/placeshelper.js'
 
 const Contents = React.createClass({
   getInitialState() {
@@ -47,12 +49,29 @@ const Contents = React.createClass({
         map.fitBounds(place.geometry.viewport);
       } else {
         map.setCenter(place.geometry.location);
-        map.setZoom(17);
+        map.setZoom(12);
       }
 
       this.setState({
         place: place,
         position: place.geometry.location
+      })
+
+      const opts = {
+        location: map.center,
+        radius: '500',
+        types: ['cafe']
+      }
+      searchNearby(google, map, opts)
+        .then((results, pagination) => {
+          this.setState({
+            places: results,
+            pagination
+          })
+// !!!
+
+        }).catch((status, result) => {
+          // There was an error
       })
     })
   },
@@ -61,9 +80,14 @@ const Contents = React.createClass({
     const props = this.props;
     const {position} = this.state;
 
+    console.log(this.state.places)
+
+
     return (
       <div className={styles.flexWrapper}>
-        <div className={styles.left}>
+        <div className={styles.topbar}>
+          <Link to="/"><h1>PadStats</h1></Link>
+          <section>
           <form onSubmit={this.onSubmit}>
             <input
               ref='autocomplete'
@@ -74,11 +98,9 @@ const Contents = React.createClass({
               type='submit'
               value='Go' />
           </form>
-          <div>
-            <div>Lat: {position && position.lat()}</div>
-            <div>Lng: {position && position.lng()}</div>
-          </div>
+          </section>
         </div>
+
         <div className={styles.right}>
           <Map {...props}
               containerStyle={{
@@ -89,26 +111,15 @@ const Contents = React.createClass({
               center={this.state.position}
               centerAroundCurrentLocation={false}>
                 <Marker position={this.state.position} />
+
+
           </Map>
         </div>
       </div>
     )
+
   }
 })
 
-const MapWrapper = React.createClass({
-  render: function() {
-    const props = this.props;
-    const {google} = this.props;
 
-    return (
-      <Map google={google}
-          className={'map'}
-          visible={false}>
-            <Contents {...props} />
-      </Map>
-    );
-  }
-})
-
-export default MapWrapper
+export default Contents

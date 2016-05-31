@@ -7,22 +7,6 @@ import styles from './global.styles.css';
 import Container from './Container'
 
 const routeMap = {
-  'basic': {
-    name: 'Simple',
-    component: require('./components/basic').default
-  },
-  'markers': {
-    name: 'Marker',
-    component: require('./components/withMarkers').default
-  },
-  'clickable_markers': {
-    name: 'Clickable markers',
-    component: require('./components/clickableMarkers').default
-  },
-  'places': {
-    name: 'Google places',
-    component: require('./components/places').default
-  },
   'autocomplete': {
     name: 'Autocomplete',
     component: require('./components/autocomplete').default
@@ -51,7 +35,7 @@ const routes = (
                 name={r.name}
                 component={r.component} />)
       })}
-      <IndexRoute component={routeMap['basic'].component} />
+      <IndexRoute component={routeMap['autocomplete'].component} />
     </Route>
   </Router>
 )

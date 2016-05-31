@@ -10,7 +10,7 @@
   }
 
   .right {
-    flex: 1;
+    flex: 4;
     order: 2;
   }
 
@@ -21,11 +21,11 @@
 
     input {
       height: 100%;
-      font-size: 1.4em;
+      font-size: .8em;
     }
 
     input[type=text] {
-      width: 80%;
+      width: 70%;
       position: absolute;
       top: 0;
       left: 0;
@@ -34,9 +34,37 @@
       width: 20%;
       position: absolute;
       right: 0;
-      top: 2px;
+      top: 3px;
       border: 1px solid #ddd;
       background: #FFF;
     }
+  }
+}
+
+.topbar {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  background: #48b5e9;
+  width: 100%;
+  padding: 0 25px;
+  height: 80px;
+  line-height: 80px;
+  color: #fff;
+
+  a {
+    /*text-transform: uppercase;*/
+    text-decoration: none;
+    letter-spacing: 1px;
+
+    line-height: 40px;
+    h1 { font-size: 28px; }
+  }
+  section {
+    position: absolute;
+    top: 0px;
+    right: 75px;
+    width: 30vw;
   }
 }
