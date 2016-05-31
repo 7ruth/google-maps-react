@@ -1,0 +1,16 @@
+.flexWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .left {
+    flex: 1;
+    order: 2;
+    padding: 20px;
+  }
+
+  .right {
+    flex: 4;
+    order: 1;
+  }
+}

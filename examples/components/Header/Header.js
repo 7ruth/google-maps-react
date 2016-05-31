@@ -2,15 +2,112 @@ import React from 'react'
 import {Link} from 'react-router'
 
 import styles from './styles.module.css';
+import MainMap from '../../components/MainMap/MainMap'
+import ReactDOM from 'react-dom'
+import {searchNearby} from '../../../src/lib/placeshelper.js'
 
 const Header=React.createClass({
-  render() {
+  getInitialState() {
+    return {
+      place: null,
+      position: null
+    }
+  },
+
+  onSubmit: function(e) {
+    e.preventDefault();
+  },
+
+  componentDidMount: function() {
+    this.renderAutoComplete();
+  },
+
+  componentDidUpdate(prevProps) {
+    const {google, map} = this.props;
+    if (map !== prevProps.map) {
+      this.renderAutoComplete();
+    }
+  },
+
+  renderAutoComplete: function() {
+    const {google, map} = this.props;
+
+    if (!google || !map) return;
+
+    const aref = this.refs.autocomplete;
+    const node = ReactDOM.findDOMNode(aref);
+    var autocomplete = new google.maps.places.Autocomplete(node);
+    autocomplete.bindTo('bounds', map);
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        return;
+      }
+
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(12);
+      }
+
+      this.setState({
+        place: place,
+        position: place.geometry.location
+      })
+
+      const opts = {
+        location: map.center,
+        radius: '500',
+        types: ['cafe']
+      }
+      searchNearby(google, map, opts)
+        .then((results, pagination) => {
+
+          console.log(results)
+
+          this.setState({
+            places: results,
+            pagination
+          })
+// !!!
+
+        }).catch((status, result) => {
+          // There was an error
+      })
+    })
+  },
+  render: function() {
+    const props = this.props;
+    const {position} = this.state;
+
     return (
-      <div className={styles.topbar}>
-        <Link to="/"><h1>PadStats</h1></Link>
-        <section>
-          Home
-        </section>
+      <div>
+        <div className={styles.topbar}>
+          <Link to="/"><h1>PadStats</h1></Link>
+          <section>
+          <form onSubmit={this.onSubmit}>
+            <input
+              ref='autocomplete'
+              type="text"
+              placeholder="Enter a location" />
+            <input
+              className={styles.button}
+              type='submit'
+              value='Go' />
+          </form>
+          </section>
+        </div>
+
+        <div>
+          <MainMap {...props}
+            position= {this.state.position}
+            places ={this.state.places}/>
+        </div>
+        <div>
+
+        </div>
       </div>
     )
   }

@@ -1,3 +1,32 @@
+
+
+  form {
+    margin: 20px auto;
+    position: relative;
+    height: 30px;
+
+    input {
+      height: 100%;
+      font-size: .8em;
+    }
+
+    input[type=text] {
+      width: 70%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    input[type=submit] {
+      width: 20%;
+      position: absolute;
+      right: 0;
+      top: 3px;
+      border: 1px solid #ddd;
+      background: #FFF;
+    }
+  }
+
+
 .topbar {
   position: fixed;
   z-index: 10;

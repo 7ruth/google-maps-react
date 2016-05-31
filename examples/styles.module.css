@@ -34,7 +34,7 @@ html, body {
     flex: 3;
     order: 2;
     position: relative;
-    min-height: 100%;
+    min-height: 100vh;
   }
 }
 

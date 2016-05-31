@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import {Link} from 'react-router'
 import Header from './components/Header/Header'
 import {searchNearby} from '../src/lib/placeshelper.js'
-import Contents from './components/autocomplete'
+
 import Map, {Marker} from '../src/index'
 
 
@@ -45,12 +45,9 @@ export const Container = React.createClass({
               className={'map'}
               visible={false}>
 
-          <Contents {...props} />
+          <Header />
 
           </Map>
-
-
-
           </div>
         </div>
       </div>

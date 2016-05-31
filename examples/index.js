@@ -9,7 +9,7 @@ import Container from './Container'
 const routeMap = {
   'autocomplete': {
     name: 'Autocomplete',
-    component: require('./components/autocomplete').default
+    component: require('./components/MainMap/MainMap').default
   }
 }
 
