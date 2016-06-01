@@ -6,6 +6,7 @@ const SidePanel=React.createClass({
 
   render: function() {
     console.log(this.props.places)
+    console.log(this.props.arrayPlaces)
 
     if (this.props.places) {
       var sidePanel =

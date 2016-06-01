@@ -57,25 +57,48 @@ const Header=React.createClass({
         position: place.geometry.location
       })
 
+      var places_types = [
+        'convenience_store',
+        'gym',
+        'grocery_or_supermarket',
+        'school',
+        'library',
+        'museum'
+      ];
+
+      var places = [];
+
+      var user_selection = [places_types[0],places_types[1],places_types[2]]
+
+      for (var i=0; i<user_selection.length; i++){
+
+
       const opts = {
         location: map.center,
         radius: '500',
-        types: ['cafe']
+        types: [user_selection[i]]
       }
+
+      console.log(user_selection[i])
+
       searchNearby(google, map, opts)
         .then((results, pagination) => {
 
-          console.log(results)
+          places.push(results)
 
+          console.log(results)
+          console.log(places)
+
+        if (places.length == user_selection.length){
           this.setState({
-            places: results,
+            places: places[0],
+            arrayPlaces: places,
             pagination
           })
+        }
 // !!!
-
-        }).catch((status, result) => {
-          // There was an error
-      })
+        })
+      }
     })
   },
   render: function() {
@@ -103,10 +126,8 @@ const Header=React.createClass({
         <div>
           <MainMap {...props}
             position= {this.state.position}
-            places ={this.state.places}/>
-        </div>
-        <div>
-
+            places ={this.state.places}
+            arrayPlaces = {this.state.arrayPlaces}/>
         </div>
       </div>
     )

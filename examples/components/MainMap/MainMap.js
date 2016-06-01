@@ -18,12 +18,14 @@ const MainMap = React.createClass({
   render: function() {
     const props = this.props;
     console.log(this.props.places)
+    console.log(this.props.arrayPlaces)
 
     if (this.props.position){
       var sidepanel =
         <div className={styles.left}>
           <SidePanel {...props}
-            places = {this.props.places} />
+            places = {this.props.places}
+            arrayPlaces = {this.props.arrayPlaces} />
         </div>;
       } else {
         var sidepanel = <div></div>;
