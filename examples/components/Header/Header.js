@@ -1,16 +1,43 @@
 import React from 'react'
-import {Link} from 'react-router'
-
-import styles from './styles.module.css';
-import MainMap from '../../components/MainMap/MainMap'
 import ReactDOM from 'react-dom'
+import MainMap from '../../components/MainMap/MainMap'
+import styles from './styles.module.css';
+import {Link} from 'react-router'
 import {searchNearby} from '../../../src/lib/placeshelper.js'
+import {lookupDirections} from '../../../src/lib/directionshelper.js'
+import CheckboxGroup from 'react-checkbox-group';
+
+var placesTypes = [
+  'convenience_store',
+  'gym',
+  'grocery_or_supermarket',
+  'school',
+  'library',
+  'museum'
+];
+
+var placeTypesKey = {
+  'convenience_store':'Convenience Store',
+  'gym':'Gym',
+  'grocery_or_supermarket':'Grocery Store',
+  'school':'School',
+  'library':'Library',
+  'museum':'Museum'
+}
+
+var userSelection = [placesTypes[0],placesTypes[1],placesTypes[2]];
+var userSelectionWords = [placeTypesKey[placesTypes[0]],placeTypesKey[placesTypes[1]],placeTypesKey[placesTypes[2]]];
+var counters=[];
 
 const Header=React.createClass({
+
   getInitialState() {
     return {
       place: null,
-      position: null
+      position: null,
+      userSelection: userSelection,
+      userSelectionWords: userSelectionWords,
+      placesTypes: placesTypes
     }
   },
 
@@ -57,49 +84,46 @@ const Header=React.createClass({
         position: place.geometry.location
       })
 
-      var places_types = [
-        'convenience_store',
-        'gym',
-        'grocery_or_supermarket',
-        'school',
-        'library',
-        'museum'
-      ];
-
       var places = [];
+      var poiObject ={};
 
-      var user_selection = [places_types[0],places_types[1],places_types[2]]
+      for (var i=0; i<placesTypes.length; i++){
 
-      for (var i=0; i<user_selection.length; i++){
-
-
-      const opts = {
-        location: map.center,
-        radius: '500',
-        types: [user_selection[i]]
-      }
-
-      console.log(user_selection[i])
-
-      searchNearby(google, map, opts)
-        .then((results, pagination) => {
-
-          places.push(results)
-
-          console.log(results)
-          console.log(places)
-
-        if (places.length == user_selection.length){
-          this.setState({
-            places: places[0],
-            arrayPlaces: places,
-            pagination
-          })
+        const opts = {
+          location: map.center,
+          radius: '1000',
+          types: [placesTypes[i]]
         }
-// !!!
+
+        searchNearby(google, map, opts)
+          .then((results, pagination) => {
+            poiObject[opts.types] = results
+            if (Object.keys(poiObject).length == placesTypes.length){
+              this.setState({
+                places: places[0],
+                poiObject: poiObject,
+                placesTypes: placesTypes,
+                pagination
+            })
+            counters=[];
+          }
         })
       }
     })
+  },
+  mapOptionsChanged: function(newSelection) {
+    userSelection=[];
+    userSelectionWords=[];
+    userSelection=newSelection;
+
+    for (var i=0; i<userSelection.length; i++){
+      userSelectionWords.push(placeTypesKey[userSelection[i]])
+    }
+
+    this.setState({
+      userSelection: userSelection,
+      userSelectionWords: userSelectionWords
+    });
   },
   render: function() {
     const props = this.props;
@@ -109,25 +133,61 @@ const Header=React.createClass({
       <div>
         <div className={styles.topbar}>
           <Link to="/"><h1>PadStats</h1></Link>
+
           <section>
-          <form onSubmit={this.onSubmit}>
-            <input
-              ref='autocomplete'
-              type="text"
-              placeholder="Enter a location" />
-            <input
-              className={styles.button}
-              type='submit'
-              value='Go' />
-          </form>
+            <div className={styles.searchbox}>
+              <form onSubmit={this.onSubmit}>
+                <input
+                    ref='autocomplete'
+                    type="text"
+                    placeholder="Enter a location" />
+                <input
+                    className={styles.button}
+                    type='submit'
+                    value='Go' />
+              </form>
+            </div>
+            <div className={styles.checkboxdiv}>
+              <CheckboxGroup
+                name="mapOptions"
+                value={this.state.userSelection}
+                onChange={this.mapOptionsChanged}
+                >
+                 {
+                   Checkbox => (
+                     <form className={styles.checkbox}>
+                       <label>
+                         <Checkbox value="convenience_store"/> Convenience Store
+                       </label>
+                       <label>
+                         <Checkbox value="gym"/> Gym
+                       </label>
+                       <label>
+                         <Checkbox value="grocery_or_supermarket"/> Grocery
+                       </label>
+                       <label>
+                         <Checkbox value="school"/> School
+                       </label>
+                       <label>
+                         <Checkbox value="library"/> Library
+                       </label>
+                       <label>
+                         <Checkbox value="museum"/> Museum
+                       </label>
+                     </form>
+                   )
+                 }
+             </CheckboxGroup>
+            </div>
           </section>
         </div>
-
         <div>
           <MainMap {...props}
             position= {this.state.position}
-            places ={this.state.places}
-            arrayPlaces = {this.state.arrayPlaces}/>
+            poiObject = {this.state.poiObject}
+            placesTypes = {this.state.placesTypes}
+            userSelection= {this.state.userSelection}
+            userSelectionWords = {this.state.userSelectionWords}/>
         </div>
       </div>
     )

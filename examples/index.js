@@ -7,8 +7,8 @@ import styles from './global.styles.css';
 import Container from './Container'
 
 const routeMap = {
-  'autocomplete': {
-    name: 'Autocomplete',
+  'mainmap': {
+    name: 'MainMap',
     component: require('./components/MainMap/MainMap').default
   }
 }
@@ -35,7 +35,7 @@ const routes = (
                 name={r.name}
                 component={r.component} />)
       })}
-      <IndexRoute component={routeMap['autocomplete'].component} />
+      <IndexRoute component={routeMap['mainmap'].component} />
     </Route>
   </Router>
 )
